@@ -4,6 +4,7 @@
 // You can read more about it at https://doc.rust-lang.org/std/convert/trait.TryFrom.html
 use std::convert::{TryFrom, TryInto};
 use std::error;
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 struct Color {
@@ -12,7 +13,19 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
+#[derive(Debug)]
+struct ColorError {
+    message: String,
+}
+
+impl fmt::Display for ColorError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", "Error")
+    }
+}
+
+impl std::error::Error for ColorError {}
+
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -43,12 +56,19 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = Box<dyn error::Error>;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
-        // if
+        if slice.len() != 3 {return Err(Box::new(ColorError{message: String::from("Bad number of items in the slice")}))}
         for i in slice {
             if !(0..=255).contains(i) {
-                Err('Uppps')
+                return Err(Box::new(ColorError{
+                    message: String::from("Nope")
+                }))
             }
         }
+        Ok(Color {
+            red: slice[0] as u8,
+            green: slice[1] as u8,
+            blue: slice[2] as u8        
+        })
     }
 }
 

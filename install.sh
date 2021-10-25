@@ -137,11 +137,11 @@ fi
 
 # Checking whether Clippy is installed.
 # Due to a bug in Cargo, this must be done with Rustup: https://github.com/rust-lang/rustup/issues/1514
-Clippy=$(rustup component list | grep "clippy" | grep "installed")
-if [ -z "$Clippy" ]
-then
+# Clippy=$(rustup component list | grep "clippy" | grep "installed")
+# if [ -z "$Clippy" ]
+# then
     echo "Installing the 'cargo-clippy' executable..."
     rustup component add clippy
-fi
+# fi
 
 echo "All done! Run 'rustlings' to get started."
