@@ -2,8 +2,11 @@
 // Additionally, upon implementing FromStr, you can use the `parse` method
 // on strings to generate an object of the implementor type.
 // You can read more about it at https://doc.rust-lang.org/std/str/trait.FromStr.html
+
 use std::error;
+use std::fmt;
 use std::str::FromStr;
+use std::error::Error;
 
 #[derive(Debug)]
 struct Person {
@@ -11,7 +14,15 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
+#[derive(Debug)]
+struct MyError {}
+
+impl Error for MyError {}
+impl fmt::Display for MyError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", "Error")
+    }
+}
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -26,6 +37,17 @@ struct Person {
 impl FromStr for Person {
     type Err = Box<dyn error::Error>;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        let parts = s.split(",").collect::<Vec<&str>>();
+        if parts.len() != 2 { return Err(Box::new(MyError{}))}
+        for part in parts.iter() {
+            if part.len() == 0 {
+                return Err(Box::new(MyError{}))
+            }
+        }
+        Ok(Person{
+            name: String::from(parts[0]),
+            age: parts[1].parse::<usize>()?,
+        })
     }
 }
 
